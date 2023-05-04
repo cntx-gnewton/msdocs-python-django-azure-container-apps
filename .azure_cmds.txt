@@ -1,0 +1,7 @@
+az acr update --name cntxRegistry \
+--resource-group cntxRegistry-rg \
+--admin-enabled true
+
+az acr credential show \
+--name  cntxRegistry \
+--resource-group cntxRegistry-rg
