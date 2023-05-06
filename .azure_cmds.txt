@@ -1,7 +1,15 @@
-az acr update --name cntxRegistry \
---resource-group cntxRegistry-rg \
---admin-enabled true
 
-az acr credential show \
---name  cntxRegistry \
---resource-group cntxRegistry-rg
+az acr update --name cntxRegistry --resource-group cntxRegistry-rg --admin-enabled true
+az acr credential show --name  cntxdemoRegistry --resource-group pythoncontainer-rg
+
+az postgres flexible-server db create --resource-group pythoncontainer-rg --server-name cntxdbserver --database-name restaurants_reviews
+
+
+<location> is one of the Azure location Name values from the output of the command az account list-locations -o table
+az containerapp env create --name python-container-env --resource-group pythoncontainer-rg --location eastus2
+
+ENV_VARS= AZURE_POSTGRESQL_HOST="cntxdbserver.postgres.database.azure.com" AZURE_POSTGRESQL_DATABASE="restaurants_reviews" AZURE_POSTGRESQL_USERNAME="cntxadmin" AZURE_POSTGRESQL_PASSWORD="4dqlSh9qijjjZvcO" RUNNING_IN_PRODUCTION="1" AZURE_SECRET_KEY=9330ecac7fa9b74c86a084508c2c069dcf87322a001fcf5fa52caaca3a810e1f
+
+
+
+az containerapp create --name python-container-app --resource-group pythoncontainer-rg --image cntxdemoRegistry.azurecr.io/pythoncontainer:latest --environment python-container-env --ingress external --target-port 8000 --registry-server cntxdemoregistry.azurecr.io --registry-username cntxdemoRegistry --registry-password SMlnxgSrxfjZSLQcN+kh2OLyY7jVEUtgA8g9Y8Zqo3+ACRDKx5W5 --env-vars AZURE_POSTGRESQL_HOST="cntxdbserver.postgres.database.azure.com" AZURE_POSTGRESQL_DATABASE="restaurants_reviews" AZURE_POSTGRESQL_USERNAME="cntxadmin" AZURE_POSTGRESQL_PASSWORD="4dqlSh9qijjjZvcO" RUNNING_IN_PRODUCTION="1" AZURE_SECRET_KEY=9330ecac7fa9b74c86a084508c2c069dcf87322a001fcf5fa52caaca3a810e1f --query properties.configuration.ingress.fqdn
